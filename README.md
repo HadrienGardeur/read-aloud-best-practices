@@ -4,6 +4,8 @@ With the advent of the European Accessibility Act in June 2025, support for read
 
 This repository is meant to document best practices for developers or for anyone interested in understanding the inner-workings of a read aloud feature. It won't target a specific platform, ideally making it suitable for both native and Web apps.
 
+Through a dedicated Github Project, this repo will also identify issues that get in the way of implementin a good read aloud experience on various platforms.
+
 # Steps involved
 
 While read aloud is often presentend as a fairly straightforward affordance for users, it's implementation is complex and involves many different steps:
