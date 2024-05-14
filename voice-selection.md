@@ -70,7 +70,7 @@ Similarly, all platforms provide language and regional information when listing 
 - 💡If there is no voice available for a language, what should be the fallback rule?
 - When selecting a default voice for a language, applications should follow the user's regional preferences rather than the ones documented in the publication.
 - If an application cannot match these preferences, it should rely on language-specific fallbacks rules. For example, if the device is set to `fr-BE` (French from Belgium) but there isn't a single voice available for Belgium, it could fallback to `fr-FR` (French from France) instead.
-- If system preferences do not return any information for a given language, applications should also look into regional preferences for other languages. For example, if the device is set to `en-CA` (English from Canada), it could default to `fr-CA` (French from Canada) voices for French instead of that language's fallback.
+- If system preferences do not return any information for a given language, applications should also look into regional preferences for other languages. For example, if a device is set to `en-CA` (English from Canada), an application could default to `fr-CA` (French from Canada) voices for French instead of that language's fallback (`fr-FR` using the previous example).
 - When listing voices, applications should group voices together using regions and display the user's preferred regions at the top.
 
 ## System defaults
@@ -98,3 +98,7 @@ Similarly, all platforms provide language and regional information when listing 
 ### Personal voices
 
 …
+
+## Resources
+
+- [Recommended voices for the Web Speech API](https://github.com/HadrienGardeur/web-speech-recommended-voices)
