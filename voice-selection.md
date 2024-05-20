@@ -2,10 +2,10 @@
 
 When selecting a voice, the following criteria need to be considered:
 
-- [offline availability](#offline-availability)
 - [language and regional preferences](#language-and-regional-preferences)
-- [system defaults](#system-defaults)
 - [voice quality](#voice-quality)
+- [system defaults](#system-defaults)
+- [offline availability](#offline-availability)
 - along with [various other traits](#other-traits)
 
 **Recommendations:**
@@ -14,30 +14,6 @@ When selecting a voice, the following criteria need to be considered:
 - But users should always be free to select the voice that they prefer, ideally using a contextualized voice list to avoid displaying hundreds of voices.
 - Voice preferences should be saved per language for all publications, to make sure that the user doesn't need to re-select a voice whenever they open a new publication.
 - Additional language packs are usually hidden fairly deep in system settings, where users are not likely to find them. On platforms where deep linking into system settings is possible, it's a good idea to include a link from your read aloud settings to these additional voice packs.
-
-## Offline availability
-
-On most platforms, the best voices tend to require an online connection to manage the playback of an utterance.
-
-While this can be great for the overall listening experience, relying strictly on online voices can be problematic:
-
-- Users can be temporarily offline, which would restrict their ability to use the read aloud feature.
-- If they're on a limited data plan, this could trigger additional costs or block the read aloud feature once the data cap has been reached.
-- In an environment with a very high latency, the use of online voices could negatively impact the overall experience.
-
-The following APIs return information about offline availability:
-
-- On the Web, [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information reliably in the [`localService`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService) property for each voice.
-- On Android and Chrome OS, this information is available as a method for [each voice](https://developer.android.com/reference/kotlin/android/speech/tts/Voice) using [`isNetworkConnectionRequired()`](https://developer.android.com/reference/kotlin/android/speech/tts/Voice#isNetworkConnectionRequired()). In addition, voices also include an estimated network latency (with 5 different values, from very low to very high).
-
-In native apps on Apple devices, this informations is missing [from the fields describing a voice](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice#2857908) since all voices are available offline (as long as they have been downloaded).
-
-**Recommendations:**
-
-- Users should be able to easily identify voices that require a connection.
-- If an application defaults to an online voice, it should also fallback automatically to an offline voice without requiring additional user input.
-- Users should be free to easily disable all online voices, which should impact the default voice and the list of voices displayed to the user.
-- 💡Should we also recommend a fallback to an offline voice if the user selected an online voice? If not, should the application warn the user that their preferred voice is unavailable offline?
 
 ## Language and regional preferences
 
@@ -74,6 +50,11 @@ Similarly, all platforms provide language and regional information when listing 
 - If system preferences do not return any information for a given language, applications should also look into regional preferences for other languages. For example, if a device is set to `en-CA` (English from Canada), an application could default to `fr-CA` (French from Canada) voices for French instead of that language's fallback (`fr-FR` using the previous example).
 - When listing voices, applications should group voices together using regions and display the user's preferred regions at the top.
 
+## Voice quality
+
+…
+
+
 ## System defaults
 
 On every platform, users can define a system default for voice selection. These system defaults usually require to select:
@@ -85,7 +66,9 @@ In some platforms, there's also a concept of engine, where the list of voices de
 
 These settings tend to be hidden pretty deep in system settings under accessibility settings, which lower the chance of users encountering them.
 
-Identifying these system defaults can also be harder than it looks. On the Web,  [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information using [`default`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/default) with some noticeable inconsistencies:
+Identifying these system defaults can also be harder than expected. 
+
+On the Web,  [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information using [`default`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/default) with some noticeable inconsistencies:
 
 - On Safari, every single voice is incorrectly identified as being the default one ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)).
 - While on Chrome for Android, none of them are identified as the default voice ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)).
@@ -102,15 +85,37 @@ Using these APIs, applications can potentially identify:
 
 Finally, it's worth pointing out that there's no easy way to know whether the system default was truly set by the user or if it's the platform's default for a given language.
 
+Even if the user installs additional voice packs with higher quality voices, it doesn't automatically overrides the platform defaults.
+
 **Recommandations:**
 
+- All in all, system defaults are hardly the most useful criteria to take into account and should be simply displayed as an option among others in the voice list.
 - Applications should never use the system default voice without checking its language first and making sure that it's equal to the current utterance's language.
-- Ideally, all applications should be aware of platform defaults to further identify if the system default was truly set by the user.
+- Ideally, all applications should be aware of platform defaults to further identify if the system defaults were truly set by the user.
 
+## Offline availability
 
-## Voice quality
+On most platforms, the best voices tend to require an online connection to manage the playback of an utterance.
 
-…
+While this can be great for the overall listening experience, relying strictly on online voices can be problematic:
+
+- Users can be temporarily offline, which would restrict their ability to use the read aloud feature.
+- If they're on a limited data plan, this could trigger additional costs or block the read aloud feature once the data cap has been reached.
+- In an environment with a very high latency, the use of online voices could negatively impact the overall experience.
+
+The following APIs return information about offline availability:
+
+- On the Web, [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information reliably in the [`localService`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService) property for each voice.
+- On Android and Chrome OS, this information is available as a method for [each voice](https://developer.android.com/reference/kotlin/android/speech/tts/Voice) using [`isNetworkConnectionRequired()`](https://developer.android.com/reference/kotlin/android/speech/tts/Voice#isNetworkConnectionRequired()). In addition, voices also include an estimated network latency (with 5 different values, from very low to very high).
+
+In native apps on Apple devices, this informations is missing [from the fields describing a voice](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice#2857908) since all voices are available offline (as long as they have been downloaded).
+
+**Recommendations:**
+
+- Users should be able to easily identify voices that require a connection.
+- If an application defaults to an online voice, it should also fallback automatically to an offline voice without requiring additional user input.
+- Users should be free to easily disable all online voices, which should impact the default voice and the list of voices displayed to the user.
+- 💡Should we also recommend a fallback to an offline voice if the user selected an online voice? If not, should the application warn the user that their preferred voice is unavailable offline?
 
 ## Other traits
 
@@ -133,3 +138,4 @@ Finally, it's worth pointing out that there's no easy way to know whether the sy
 ## Resources
 
 - [Recommended voices for the Web Speech API](https://github.com/HadrienGardeur/web-speech-recommended-voices)
+- [List of voices available on Windows 10/11](https://support.microsoft.com/en-us/windows/appendix-a-supported-languages-and-voices-4486e345-7730-53da-fcfe-55cc64300f01)
