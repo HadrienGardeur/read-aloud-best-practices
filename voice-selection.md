@@ -13,6 +13,7 @@ When selecting a voice, the following criteria need to be considered:
 - Reading applications should implement smart defaults that follow the criteria documented in this page.
 - But users should always be free to select the voice that they prefer, ideally using a contextualized voice list to avoid displaying hundreds of voices.
 - Voice preferences should be saved per language for all publications, to make sure that the user doesn't need to re-select a voice whenever they open a new publication.
+- Additional language packs are usually hidden fairly deep in system settings, where users are not likely to find them. On platforms where deep linking into system settings is possible, it's a good idea to include a link from your read aloud settings to these additional voice packs.
 
 ## Offline availability
 
@@ -27,7 +28,7 @@ While this can be great for the overall listening experience, relying strictly o
 The following APIs return information about offline availability:
 
 - On the Web, [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information reliably in the [`localService`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService) property for each voice.
-- On Android, this information is available as a method for [each voice](https://developer.android.com/reference/kotlin/android/speech/tts/Voice) using [`isNetworkConnectionRequired()`](https://developer.android.com/reference/kotlin/android/speech/tts/Voice#isNetworkConnectionRequired()). In addition, voices also include an estimated network latency (with 5 different values, from very low to very high).
+- On Android and Chrome OS, this information is available as a method for [each voice](https://developer.android.com/reference/kotlin/android/speech/tts/Voice) using [`isNetworkConnectionRequired()`](https://developer.android.com/reference/kotlin/android/speech/tts/Voice#isNetworkConnectionRequired()). In addition, voices also include an estimated network latency (with 5 different values, from very low to very high).
 
 In native apps on Apple devices, this informations is missing [from the fields describing a voice](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice#2857908) since all voices are available offline (as long as they have been downloaded).
 
@@ -52,13 +53,13 @@ While this base language and the language of each utterance can contain regional
 On all platforms, language and regional preferences can be obtained through the following APIs:
 
 - On the Web, this informations is provided by the browser to a remote server using the [`Accept-Language`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language) header in HTTP and an ordered list of [BCP 47 language tags](https://datatracker.ietf.org/doc/html/rfc5646) (`en-US` for example). Web apps can also access this information using [`navigator.languages`](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages).
-- On Android, the [`Locale`](https://developer.android.com/reference/java/util/Locale) class can be called to return this information. Applications can have their own language setting in recent versions of Android, but it's best to use system settings instead since they can return multiple languages and/or regions.
+- On Android and Chrome OS, the [`Locale`](https://developer.android.com/reference/java/util/Locale) class can be called to return this information. Applications can have their own language setting in recent versions of Android, but it's best to use system settings instead since they can return multiple languages and/or regions.
 - On Apple devices, a similar [`Locale`](https://developer.apple.com/documentation/foundation/locale#2891954) structure is available and can [return the user's preferred languages](https://developer.apple.com/documentation/foundation/locale#2891954). This is also available when working with [`AVSpeechSynthesisVoice`](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice) using the [`currentLanguageCode()`](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/1619707-currentlanguagecode) method.
 
 Similarly, all platforms provide language and regional information when listing voices:
 
 - On the Web, [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information slightly inconsistently in the [`lang`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/lang) property for each voice (related issues have been filed for [Chrome](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/13) and for [Firefox](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/17) on Android).
-- On Android, this information is available as a method for [each voice](https://developer.android.com/reference/kotlin/android/speech/tts/Voice) using [`getLocale()`](https://developer.android.com/reference/kotlin/android/speech/tts/Voice#getLocale()).
+- On Android and Chrome OS, this information is available as a method for [each voice](https://developer.android.com/reference/kotlin/android/speech/tts/Voice) using [`getLocale()`](https://developer.android.com/reference/kotlin/android/speech/tts/Voice#getLocale()).
 - On Apple devices, this information is available as a property for [each voice](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice) under [`language`](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/1619698-language). 
 
 **Recommendations:**
@@ -75,7 +76,37 @@ Similarly, all platforms provide language and regional information when listing 
 
 ## System defaults
 
-…
+On every platform, users can define a system default for voice selection. These system defaults usually require to select:
+
+- a language
+- and a voice for that language
+
+In some platforms, there's also a concept of engine, where the list of voices depends on the engine selected for playback.
+
+These settings tend to be hidden pretty deep in system settings under accessibility settings, which lower the chance of users encountering them.
+
+Identifying these system defaults can also be harder than it looks. On the Web,  [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information using [`default`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/default) with some noticeable inconsistencies:
+
+- On Safari, every single voice is incorrectly identified as being the default one ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)).
+- While on Chrome for Android, none of them are identified as the default voice ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)).
+
+On Android and on Apple devices, there is no concept of default voice when fetching a list of voices, but there are alternate ways of obtaining this information:
+
+- On Android and Chrome OS, [`getDefaultVoice()`](https://developer.android.com/reference/kotlin/android/speech/tts/TextToSpeech#getVoices()) can be called on the [`TextToSpeech`](https://developer.android.com/reference/kotlin/android/speech/tts/TextToSpeech) class to return the system default.
+- On Apple devices, [`AVSpeechSynthesisVoice`](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice) can be [initialized with a language code](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/1619699-init) to return the default voice for that language and [without any value](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/1619699-init#discussion) to return the system default.
+
+Using these APIs, applications can potentially identify:
+
+ - a default voice per language on Apple devices
+ - and a single system default for every other plaform
+
+Finally, it's worth pointing out that there's no easy way to know whether the system default was truly set by the user or if it's the platform's default for a given language.
+
+**Recommandations:**
+
+- Applications should never use the system default voice without checking its language first and making sure that it's equal to the current utterance's language.
+- Ideally, all applications should be aware of platform defaults to further identify if the system default was truly set by the user.
+
 
 ## Voice quality
 
