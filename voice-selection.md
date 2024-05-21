@@ -73,25 +73,25 @@ On the Web,  [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/Sp
 - On Safari, every single voice is incorrectly identified as being the default one ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)).
 - While on Chrome for Android, none of them are identified as the default voice ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)).
 
-On Android and on Apple devices, there is no concept of default voice when fetching a list of voices, but there are alternate ways of obtaining this information:
+On Android and on Apple devices, there is no concept of default voice when fetching a list of voices but there are other APIs available:
 
-- On Android and Chrome OS, [`getDefaultVoice()`](https://developer.android.com/reference/kotlin/android/speech/tts/TextToSpeech#getVoices()) can be called on the [`TextToSpeech`](https://developer.android.com/reference/kotlin/android/speech/tts/TextToSpeech) class to return the system default.
-- On Apple devices, [`AVSpeechSynthesisVoice`](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice) can be [initialized with a language code](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/1619699-init) to return the default voice for that language and [without any value](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/1619699-init#discussion) to return the system default.
+- On Android and Chrome OS, [`getDefaultVoice()`](https://developer.android.com/reference/kotlin/android/speech/tts/TextToSpeech#getVoices()) can be called on the [`TextToSpeech`](https://developer.android.com/reference/kotlin/android/speech/tts/TextToSpeech) class to return the system default
+- On Apple devices, [`AVSpeechSynthesisVoice`](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice) can be [initialized with a language code](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/1619699-init) to return the platform default voice for each language/region.
 
-Using these APIs, applications can potentially identify:
+Overall this means that on Apple devices, the system defaults are impossible to fetch since none of the APIs return this information.
 
- - a default voice per language on Apple devices
- - and a single system default for every other plaform
+On Android and Chrome OS, things are slightly better, but system defaults are only useful if they match the base language of the publication.
 
 Finally, it's worth pointing out that there's no easy way to know whether the system default was truly set by the user or if it's the platform's default for a given language.
 
-Even if the user installs additional voice packs with higher quality voices, it doesn't automatically overrides the platform defaults.
+Even if the user installs additional voice packs with higher quality voices, it doesn't automatically overrides the platform defaults either.
 
 **Recommandations:**
 
 - All in all, system defaults are hardly the most useful criteria to take into account and should be simply displayed as an option among others in the voice list.
 - Applications should never use the system default voice without checking its language first and making sure that it's equal to the current utterance's language.
 - Ideally, all applications should be aware of platform defaults to further identify if the system defaults were truly set by the user.
+- Web applications should fully ignore system defaults if they detect multiple voices that identify themselves as the default voice ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)).
 
 ## Offline availability
 
