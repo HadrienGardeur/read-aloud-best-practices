@@ -80,7 +80,6 @@ In order to assess the quality of some of these voices, applications need to eit
 - On Apple devices specifically, Eloquence voices should be filtered out since they outnumber remaining voices available by default (8 Eloquence voices for 2 "normal" voices by default in French for example).
 - Web applications should rely on recommended voices, as documented [in this separate project](https://github.com/HadrienGardeur/web-speech-recommended-voices).
 
-
 ## System defaults
 
 On every platform, users can define a system default for voice selection. These system defaults usually require to select:
@@ -94,7 +93,7 @@ These system defaults tend to be hidden pretty deep in system settings under acc
 
 Identifying these system defaults can also be harder than expected. 
 
-- On the Web and applications based on Web technologies,  [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information using [`default`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/default) with some noticeable inconsistencies:
+- On the Web and applications based on Web technologies, [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information using [`default`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/default) with some noticeable inconsistencies:
 
 - On Safari, every single voice is incorrectly identified as being the default one ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)).
 - While on Chrome for Android, none of them are identified as the default voice ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)).
@@ -134,7 +133,7 @@ The following APIs return information about offline availability:
 - On the Web and applications based on Web technologies, [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information reliably in the [`localService`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService) property for each voice.
 - On Android and Chrome OS, this information is available as a method for [each voice](https://developer.android.com/reference/kotlin/android/speech/tts/Voice) using [`isNetworkConnectionRequired()`](https://developer.android.com/reference/kotlin/android/speech/tts/Voice#isNetworkConnectionRequired()). In addition, voices also include an estimated network latency (with 5 different values, from very low to very high).
 
-In native apps on Apple devices, this informations is missing [from the fields describing a voice](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice#2857908) since all voices are available offline (as long as they have been downloaded).
+In native apps on Apple devices, this informations is missing [from the fields describing a voice](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice#2857908) since all voices are available offline.
 
 **Recommendations:**
 
@@ -155,7 +154,15 @@ In native apps on Apple devices, this informations is missing [from the fields d
 
 ### Novelty voices
 
-…
+On Apple devices, novelty voices (Effects) are preloaded by default by the system, mostly for historical reasons. These 15 voices are only available in English, but in typical Apple fashion, their names are localized based on the system language.
+
+Since these voices provide no value whatsoever when using read aloud, they should be filtered out of a voice list displayed to the user.
+
+When using native APIs, Apple identifies these voices using [voice traits](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/traits) and provides [`isNoveltyVoices`](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/traits/4134513-isnoveltyvoice) as a method for inspecting voices.
+
+On the Web and in applications based on Web technologies, there's no easy way to detect them, aside from knowing their localized `name` returned by [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices).
+
+This might be covered in a future update of [the project dedicated to recommended voices on the Web](https://github.com/HadrienGardeur/web-speech-recommended-voices).
 
 ### Personal voices
 
