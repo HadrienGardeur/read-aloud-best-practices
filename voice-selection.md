@@ -34,7 +34,7 @@ On all platforms, language and regional preferences can be obtained through the 
 
 Similarly, all platforms provide language and regional information when listing voices:
 
-- On the Web, [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information slightly inconsistently in the [`lang`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/lang) property for each voice (related issues have been filed for [Chrome](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/13) and for [Firefox](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/17) on Android).
+- On the Web and applications based on Web technologies, [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information slightly inconsistently in the [`lang`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/lang) property for each voice (related issues have been filed for [Chrome](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/13) and for [Firefox](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/17) on Android).
 - On Android and Chrome OS, this information is available as a method for [each voice](https://developer.android.com/reference/kotlin/android/speech/tts/Voice) using [`getLocale()`](https://developer.android.com/reference/kotlin/android/speech/tts/Voice#getLocale()).
 - On Apple devices, this information is available as a property for [each voice](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice) under [`language`](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/1619698-language). 
 
@@ -52,7 +52,33 @@ Similarly, all platforms provide language and regional information when listing 
 
 ## Voice quality
 
-…
+With the advent of voices using machine learning (ML), quality is constantly going up at a rapid pace.
+
+With new hardware dedicated to these tasks on all platforms, these high quality voices are also becoming capable of running on device rather than strictly through cloud services.
+
+At the other end of the spectrum, some platforms continue to embed very low quality voices by default:
+
+- Eloquence voices on Apple devices
+- eSpeak voices on Chrome OS
+
+Unfortunately, the quality of each voice is not always available or in some cases, poorly documented:
+
+- On the Web and applications based on Web technologies, [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) doesn't return any information about voice quality.
+- On Android and Chrome OS, this information is available as a method for [each voice](https://developer.android.com/reference/kotlin/android/speech/tts/Voice) using [`getQuality()`](https://developer.android.com/reference/kotlin/android/speech/tts/Voice#getQuality()) and it [returns five different values](https://developer.android.com/reference/kotlin/android/speech/tts/Voice#quality_low).
+- On Apple devices, this information is available as a property for [each voice](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice) under [`quality`](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/1619688-quality) and it [returns three different values](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoicequality).
+- Unfortunately, Apple returns the same quality value (`default`) for all pre-loaded voices on their devices, even though the quality of these voices can vary greatly.
+
+In order to assess the quality of some of these voices, applications need to either infer this information (from an identifier or a voice name) or fully document what's available on each platform.
+
+[A separate project](https://github.com/HadrienGardeur/web-speech-recommended-voices) is dedicated to this task for Web applications or desktop/mobile apps built on top of Web technologies.
+
+**Recommandations:**
+
+- Applications should default to the highest quality voice available for a given language/region.
+- When listing voices, applications should sort them by voice quality once they've grouped them by region.
+- Very low quality voices can be disruptive, even with proper defaults. If anything else is available, it's best to filter them out of a voice list.
+- On Apple devices specifically, Eloquence voices should be filtered out since they outnumber remaining voices available by default (8 Eloquence voices for 2 "normal" voices by default in French for example).
+- Web applications should rely on recommended voices, as documented [in this separate project](https://github.com/HadrienGardeur/web-speech-recommended-voices).
 
 
 ## System defaults
@@ -62,13 +88,13 @@ On every platform, users can define a system default for voice selection. These 
 - a language
 - and a voice for that language
 
-In some platforms, there's also a concept of engine, where the list of voices depends on the engine selected for playback.
+On some platforms, there's also a concept of engine, where the list of voices depends on the engine selected for playback.
 
-These settings tend to be hidden pretty deep in system settings under accessibility settings, which lower the chance of users encountering them.
+These system defaults tend to be hidden pretty deep in system settings under accessibility features, which lower the chance of users encountering them. They're usually grouped together with the ability to install additional voice packs, either to extend the number of languages supported or to add offline support for higher quality voices.
 
 Identifying these system defaults can also be harder than expected. 
 
-On the Web,  [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information using [`default`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/default) with some noticeable inconsistencies:
+- On the Web and applications based on Web technologies,  [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information using [`default`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/default) with some noticeable inconsistencies:
 
 - On Safari, every single voice is incorrectly identified as being the default one ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)).
 - While on Chrome for Android, none of them are identified as the default voice ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)).
@@ -76,9 +102,9 @@ On the Web,  [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/Sp
 On Android and on Apple devices, there is no concept of default voice when fetching a list of voices but there are other APIs available:
 
 - On Android and Chrome OS, [`getDefaultVoice()`](https://developer.android.com/reference/kotlin/android/speech/tts/TextToSpeech#getVoices()) can be called on the [`TextToSpeech`](https://developer.android.com/reference/kotlin/android/speech/tts/TextToSpeech) class to return the system default
-- On Apple devices, [`AVSpeechSynthesisVoice`](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice) can be [initialized with a language code](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/1619699-init) to return the platform default voice for each language/region.
+- On Apple devices, [`AVSpeechSynthesisVoice`](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice) can be [initialized with a language code](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/1619699-init) to return the platform default voice for each language/region (as defined by Apple rather than by the user).
 
-Overall this means that on Apple devices, the system defaults are impossible to fetch since none of the APIs return this information.
+Overall this means that on Apple devices, the system defaults (as selected by the user) are impossible to fetch since none of the APIs return this information.
 
 On Android and Chrome OS, things are slightly better, but system defaults are only useful if they match the base language of the publication.
 
@@ -91,7 +117,7 @@ Even if the user installs additional voice packs with higher quality voices, it 
 - All in all, system defaults are hardly the most useful criteria to take into account and should be simply displayed as an option among others in the voice list.
 - Applications should never use the system default voice without checking its language first and making sure that it's equal to the current utterance's language.
 - Ideally, all applications should be aware of platform defaults to further identify if the system defaults were truly set by the user.
-- Web applications should fully ignore system defaults if they detect multiple voices that identify themselves as the default voice ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)).
+- Web applications should fully ignore system defaults if they detect multiple voices that identify themselves as the default voice ([related issue](https://github.com/HadrienGardeur/web-speech-recommended-voices/issues/16)) for any given language.
 
 ## Offline availability
 
@@ -105,7 +131,7 @@ While this can be great for the overall listening experience, relying strictly o
 
 The following APIs return information about offline availability:
 
-- On the Web, [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information reliably in the [`localService`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService) property for each voice.
+- On the Web and applications based on Web technologies, [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) returns this information reliably in the [`localService`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService) property for each voice.
 - On Android and Chrome OS, this information is available as a method for [each voice](https://developer.android.com/reference/kotlin/android/speech/tts/Voice) using [`isNetworkConnectionRequired()`](https://developer.android.com/reference/kotlin/android/speech/tts/Voice#isNetworkConnectionRequired()). In addition, voices also include an estimated network latency (with 5 different values, from very low to very high).
 
 In native apps on Apple devices, this informations is missing [from the fields describing a voice](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice#2857908) since all voices are available offline (as long as they have been downloaded).
