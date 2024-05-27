@@ -146,15 +146,35 @@ In native apps on Apple devices, this informations is missing [from the fields d
 
 ### Gender
 
-…
+Most voices are identified by a first name from which the user can guess the gender of the voice.
 
-### Children voices
+Although that's a fairly common approach, it's not always enough:
 
-…
+- Google doesn't use first names to identify Chrome desktop and Android voices and they don't indicate the gender in the name either.
+- It could also be harder to identify the gender of first names in other languages, if you're not a native speaker.
+
+On Apple devices, this information is available as a property for [each voice](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice) under [`gender`](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice/3081643-gender) and it [returns three different values](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoicegender).
+
+On other platforms, this information isn't available at all.
+
+This is at odds with [`voice`](https://www.w3.org/TR/speech-synthesis11/#edef_voice) in [SSML](https://www.w3.org/TR/speech-synthesis11/) and [`voice-family`](https://www.w3.org/TR/css-speech-1/#voice-props-voice-family) in [CSS Speech](https://www.w3.org/TR/css-speech-1/) which both allow the author to specify the gender of a voice.
+
+For applications based on Web technologies, this information has been documented in [a separate project dedicated to recommended voices](https://github.com/HadrienGardeur/web-speech-recommended-voices), but it doesn't cover every single voice available through this API.
+
+
+### Age
+
+Microsoft provides a few children voices in Edge. 
+
+They're not clearly identified as such in their voice name and [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices) doesn't return any information about the age of each voice.
+
+This is at odds with [`voice`](https://www.w3.org/TR/speech-synthesis11/#edef_voice) in [SSML](https://www.w3.org/TR/speech-synthesis11/) and [`voice-family`](https://www.w3.org/TR/css-speech-1/#voice-props-voice-family) in [CSS Speech](https://www.w3.org/TR/css-speech-1/) which both allow the author to specify the age of a voice.
+
+For applications based on Web technologies, children voices have been identified as such in [a separate project dedicated to recommended voices](https://github.com/HadrienGardeur/web-speech-recommended-voices), but it doesn't cover every single voice available through this API.
 
 ### Novelty voices
 
-On Apple devices, novelty voices (Effects) are preloaded by default by the system, mostly for historical reasons. These 15 voices are only available in English, but in typical Apple fashion, their names are localized based on the system language.
+On Apple devices, novelty voices (Effects) are preloaded by the system, mostly for historical reasons. These 15 voices are only available in English, but in typical Apple fashion, their names are localized based on the system language.
 
 Since these voices provide no value whatsoever when using read aloud, they should be filtered out of a voice list displayed to the user.
 
@@ -166,7 +186,9 @@ This might be covered in a future update of [the project dedicated to recommende
 
 ### Personal voices
 
-…
+On Apple devices using Apple silicon, an additional accessibility feature allow users to generate a personal voice using audio recording.
+
+This feature is primarily meant [for users at risk of losing their ability to speak](https://www.apple.com/newsroom/2023/05/apple-previews-live-speech-personal-voice-and-more-new-accessibility-features/), but these personal voices can also be used in the context of a read aloud feature, as long as the user authorizes the use of these personal voices.
 
 ## Resources
 
