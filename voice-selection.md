@@ -6,6 +6,7 @@ When selecting a voice, the following criteria need to be considered:
 - [voice quality](#voice-quality)
 - [system defaults](#system-defaults)
 - [offline availability](#offline-availability)
+- [synchronized text and audio](#synchronized-text-and-audio)
 - along with [various other traits](#other-traits)
 
 **Recommendations:**
@@ -182,13 +183,13 @@ When using native APIs, Apple identifies these voices using [voice traits](https
 
 On the Web and in applications based on Web technologies, there's no easy way to detect them, aside from knowing their localized `name` returned by [`getVoices()`](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis/getVoices).
 
-This might be covered in a future update of [the project dedicated to recommended voices on the Web](https://github.com/HadrienGardeur/web-speech-recommended-voices).
+Noveelty voices are being documented in [the project dedicated to recommended voices on the Web](https://github.com/HadrienGardeur/web-speech-recommended-voices), as [a separate JSON document](https://github.com/HadrienGardeur/web-speech-recommended-voices/blob/main/json/filters/novelty.json).
 
 ### Personal voices
 
-On Apple devices using Apple silicon, an additional accessibility feature allow users to generate a personal voice using audio recording.
+On Apple devices using Apple silicon, an additional accessibility feature allows users to generate a personal voice using audio recording.
 
-This feature is primarily meant [for users at risk of losing their ability to speak](https://www.apple.com/newsroom/2023/05/apple-previews-live-speech-personal-voice-and-more-new-accessibility-features/), but these personal voices can also be used in the context of a read aloud feature, as long as the user authorizes the use of these personal voices.
+This feature is primarily meant [for users at risk of losing their ability to speak](https://www.apple.com/newsroom/2023/05/apple-previews-live-speech-personal-voice-and-more-new-accessibility-features/), but these personal voices can also be used in the context of a read aloud feature, as long as the user authorizes their use.
 
 ## Resources
 
